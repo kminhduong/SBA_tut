@@ -25,6 +25,7 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
 	annotationProcessor("org.projectlombok:lombok")
@@ -36,6 +37,10 @@ dependencies {
 	implementation("javax.persistence:javax.persistence-api:2.2")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.4.3")
 
+
+	implementation("org.springframework:spring-context:6.2.3")
+
+	implementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
 
 }
 

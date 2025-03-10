@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+        input, button {
+            width: calc(100% - 20px);
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .product-list {
+            display: none;
+            margin-top: 20px;
+            border-top: 2px solid #ddd;
+            padding-top: 10px;
+        }
+        .product-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .product-list li {
+            background: #f9f9f9;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .message {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Add Product</h2>
+    <input type="text" id="productName" placeholder="Product Name">
+    <input type="number" id="productPrice" placeholder="Product Price">
+    <button onclick="submitProduct()">Submit</button>
+    <p id="message" class="message"></p>
+
+    <button onclick="showProducts()">Show Products</button>
+    <div class="product-list" id="productListContainer">
+        <h3>Product List</h3>
+        <ul id="productList"></ul>
+    </div>
+</div>
+
+<script>
+    let products = [];
+
+    async function submitProduct() {
+        const name = document.getElementById('productName').value.trim();
+        const price = document.getElementById('productPrice').value.trim();
+        const messageEl = document.getElementById('message');
+
+        if (!name || !price) {
+            messageEl.textContent = 'All fields are required!';
+            messageEl.className = 'message error';
+            return;
+        }
+
+        const productData = { name, price: parseFloat(price) };
+
+        try {
+            const response = await fetch('/api/products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(productData)
+            });
+
+            if (!response.ok) throw new Error('Failed to create product');
+
+            // products.push(productData);
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+
+            messageEl.textContent = 'Product added successfully!';
+            messageEl.className = 'message success';
+        } catch (error) {
+            messageEl.textContent = 'Error: ' + error.message;
+            messageEl.className = 'message error';
+        }
+    }
+
+    async function showProducts() {
+        const listContainer = document.getElementById('productListContainer');
+        const productList = document.getElementById('productList');
+        productList.innerHTML = '';
+
+        try {
+            const response = await fetch('/api/products');
+            if (!response.ok) throw new Error('Failed to fetch products');
+
+            const products = await response.json();
+
+            products.forEach(product => {
+                const li = document.createElement('li');
+                li.textContent = `${product.name} - $${product.price}`;
+                productList.appendChild(li);
+            });
+
+            listContainer.style.display = 'block';
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        }
+    }
+</script>
+</body>
+</html>

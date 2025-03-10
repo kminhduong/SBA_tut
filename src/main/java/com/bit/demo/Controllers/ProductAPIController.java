@@ -4,24 +4,23 @@ import com.bit.demo.Entities.Product;
 import com.bit.demo.Services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 
 import java.util.List;
 
-@Controller
-@RequestMapping("/products")
+@RestController
+@RequestMapping("/api/products")
 @RequiredArgsConstructor
-public class ProductController {
+public class ProductAPIController {
     private final ProductService productService;
 
+    @PostMapping
+    public ResponseEntity<Product> create(@RequestBody Product product) {
+        return ResponseEntity.ok(productService.createProduct(product));
+    }
 
     @GetMapping
-    public String home(Model model) {
-
-        model.addAttribute("message", "2345678");
-        return "index";
+    public ResponseEntity<List<Product>> getAll() {
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 }
